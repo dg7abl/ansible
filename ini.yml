@@ -1,0 +1,31 @@
+---
+- name: Install Programm
+  hosts: node2
+  become: true
+  tasks:
+    - name: install Programm
+      ansible.builtin.yum:
+       name: Programm
+       state: latest
+  tasks:
+    - name: Programm service
+      ansible.builtin.service:
+       name: Programm-server
+       enabled: true
+       state: restarted
+    - name: Port change 
+      community.general.ini_file:
+       path: /etc/Programm/Programm.ini
+       section: server
+       option: http_port
+       value: "{{ Programm_port }}"
+    become: true
+    notify: restart Programm
+    - name: Change theme 
+      community.general.ini_file:
+      path: /etc/Programm/Programm.ini
+      section: users
+      option: default 
+      value: "{{ Programm_thema }}"
+      become: true
+      notify: restart Programm
